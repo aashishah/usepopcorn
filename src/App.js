@@ -5,6 +5,7 @@ import Box from "./components/Box";
 import MovieList from "./components/MovieList";
 
 import { useState } from "react";
+import StarRating from "./components/StarRating";
 
 const tempMovieData = [
   {
@@ -53,21 +54,23 @@ const tempWatchedData = [
 ];
 
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  // const [movies, setMovies] = useState(tempMovieData);
+  // const [watched, setWatched] = useState(tempWatchedData);
 
-  return (
-    <>
-      <NavBar />
-      <main className="main">
-        <Box>
-          <MovieList movies={movies} />
-        </Box>
-        <Box>
-          <Summary watched={watched} />
-          <WatchedBox watched={watched} />
-        </Box>
-      </main>
-    </>
-  );
+  // return (
+  //   <>
+  //     <NavBar movies={movies} />
+  //     <main className="main">
+  //       <Box>
+  //         <MovieList movies={movies} />
+  //       </Box>
+  //       <Box>
+  //         <Summary watched={watched} />
+  //         <WatchedBox watched={watched} />
+  //       </Box>
+  //     </main>
+  //   </>
+  // );
+
+  return <StarRating maxRating={10} />;
 }
