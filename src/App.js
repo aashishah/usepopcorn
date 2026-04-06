@@ -7,7 +7,7 @@ import Loader from "./components/Loader";
 import { useEffect, useState } from "react";
 import StarRating from "./components/StarRating";
 import Error from "./components/Error";
-import SelectedMovie from "./components/SelectedMovie";
+import MovieDetails from "./components/MovieDetails";
 
 const tempWatchedData = [
   {
@@ -43,7 +43,11 @@ export default function App() {
   const [selectedMovie, setSelctedMovie] = useState(null);
 
   function handleSelectMovie(id) {
-    setSelctedMovie(id);
+    setSelctedMovie((selectId) => (id === selectId ? null : id));
+  }
+
+  function handleUnselect() {
+    setSelctedMovie(null);
   }
 
   useEffect(
@@ -101,7 +105,11 @@ export default function App() {
         </Box>
         <Box>
           {selectedMovie ? (
-            <SelectedMovie selectedId={selectedMovie} />
+            <MovieDetails
+              selectedId={selectedMovie}
+              onUnselect={handleUnselect}
+              apikey={apikey}
+            />
           ) : (
             <>
               <Summary watched={watched} />
