@@ -3,9 +3,10 @@ import WatchedBox from "./components/WatchedBox";
 import Summary from "./components/Summary";
 import Box from "./components/Box";
 import MovieList from "./components/MovieList";
-
-import { useState } from "react";
+import Loader from "./components/Loader";
+import { useEffect, useState } from "react";
 import StarRating from "./components/StarRating";
+import Error from "./components/Error";
 
 const tempMovieData = [
   {
@@ -53,24 +54,60 @@ const tempWatchedData = [
   },
 ];
 
+const apikey = `${process.env.REACT_APP_OMDB_KEY}`;
+
 export default function App() {
-  // const [movies, setMovies] = useState(tempMovieData);
-  // const [watched, setWatched] = useState(tempWatchedData);
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // return (
-  //   <>
-  //     <NavBar movies={movies} />
-  //     <main className="main">
-  //       <Box>
-  //         <MovieList movies={movies} />
-  //       </Box>
-  //       <Box>
-  //         <Summary watched={watched} />
-  //         <WatchedBox watched={watched} />
-  //       </Box>
-  //     </main>
-  //   </>
-  // );
+  useEffect(function () {
+    async function fetchMovies() {
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `http://www.omdbapi.com/?s=superman&apikey=${apikey}`,
+        );
 
-  return <StarRating maxRating={10} />;
+        if (!res.ok) {
+          setError("Something went wrong!");
+          throw new Error("Something went wrong!");
+        }
+
+        const data = await res.json();
+
+        if (data.Response === "False") {
+          setError("Movie not found!");
+          throw new Error("Movie not found.");
+        }
+
+        setMovies(data.Search);
+        setError("");
+      } catch (err) {
+        console.error(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMovies();
+  }, []);
+
+  return (
+    <>
+      <NavBar movies={movies} />
+      <main className="main">
+        <Box>
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {error && <Error message={error} />}
+        </Box>
+        <Box>
+          <Summary watched={watched} />
+          <WatchedBox watched={watched} />
+        </Box>
+      </main>
+    </>
+  );
 }
