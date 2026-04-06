@@ -2,36 +2,22 @@ import { useEffect, useState } from "react";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
 
-const tempWatchedData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    runtime: 148,
-    imdbRating: 8.8,
-    userRating: 10,
-  },
-  {
-    imdbID: "tt0088763",
-    Title: "Back to the Future",
-    Year: "1985",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
-    runtime: 116,
-    imdbRating: 8.5,
-    userRating: 9,
-  },
-];
-
-export default function MovieDetails({ selectedId, onUnselect, apikey }) {
+export default function MovieDetails({
+  selectedId,
+  onUnselect,
+  apikey,
+  onAddWatched,
+  watched,
+}) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [userRating, setUserRating] = useState(null);
 
-  const isWatched = tempWatchedData
-    .map((movie) => movie.imdbID)
-    .includes(selectedId);
+  const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
+
+  const watchedUserRating = watched.find(
+    (movie) => movie.imdbID === selectedId,
+  )?.userRating;
 
   const {
     Title: title,
@@ -46,6 +32,20 @@ export default function MovieDetails({ selectedId, onUnselect, apikey }) {
     Genre: genre,
   } = movie;
 
+  function handleAdd() {
+    const newWatchedMovie = {
+      imdbID: selectedId,
+      title,
+      year,
+      poster,
+      imdbRating: Number(imdbRating),
+      runtime: Number(runtime.split(" ").at(0)),
+      userRating,
+    };
+
+    onAddWatched(newWatchedMovie);
+    onUnselect();
+  }
   useEffect(
     function () {
       async function getMoveDetails() {
@@ -89,16 +89,21 @@ export default function MovieDetails({ selectedId, onUnselect, apikey }) {
             <div className="rating">
               {!isWatched ? (
                 <>
-                  <StarRating maxRating={10} size={24} />
-                  {/* {userRating > 0 && (
+                  <StarRating
+                    maxRating={10}
+                    size={24}
+                    onSetRating={setUserRating}
+                  />
+
+                  {userRating > 0 && (
                     <button className="btn-add" onClick={handleAdd}>
                       + Add to list
                     </button>
-                  )} */}
+                  )}
                 </>
               ) : (
                 <p>
-                  You rated with movie X <span>⭐️</span>
+                  You rated with movie {watchedUserRating} <span>⭐️</span>
                 </p>
               )}
             </div>
