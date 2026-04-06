@@ -1,8 +1,8 @@
-export default function WatchedBox({ watched }) {
+export default function WatchedBox({ watched, onDeleteMovie }) {
   return (
     <ul className="list">
       {watched.map((movie) => (
-        <li key={movie.imdbID}>
+        <li>
           <img src={movie.poster} alt={`${movie.title} poster`} />
           <h3>{movie.title}</h3>
           <div>
@@ -18,6 +18,12 @@ export default function WatchedBox({ watched }) {
               <span>⏳</span>
               <span>{movie.runtime} min</span>
             </p>
+            <button
+              className="btn-delete"
+              onClick={() => onDeleteMovie(movie.imdbID)}
+            >
+              X
+            </button>
           </div>
         </li>
       ))}

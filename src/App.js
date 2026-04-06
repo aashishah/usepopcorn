@@ -23,6 +23,11 @@ export default function App() {
     setSelctedMovie((selectId) => (id === selectId ? null : id));
   }
 
+  function handleDeleteMovie(id) {
+    console.log(id);
+    setWatched((watched) => watched.filter((m) => m.id !== id));
+  }
+
   function handleUnselect() {
     setSelctedMovie(null);
   }
@@ -96,7 +101,7 @@ export default function App() {
           ) : (
             <>
               <Summary watched={watched} />
-              <WatchedBox watched={watched} />
+              <WatchedBox watched={watched} onDeleteMovie={handleDeleteMovie} />
             </>
           )}
         </Box>
