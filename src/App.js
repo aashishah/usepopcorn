@@ -5,7 +5,6 @@ import Box from "./components/Box";
 import MovieList from "./components/MovieList";
 import Loader from "./components/Loader";
 import { useEffect, useState } from "react";
-import StarRating from "./components/StarRating";
 import Error from "./components/Error";
 import MovieDetails from "./components/MovieDetails";
 
@@ -24,8 +23,7 @@ export default function App() {
   }
 
   function handleDeleteMovie(id) {
-    console.log(id);
-    setWatched((watched) => watched.filter((m) => m.id !== id));
+    setWatched((watched) => watched.filter((m) => m.imdbID !== id));
   }
 
   function handleUnselect() {
@@ -38,12 +36,15 @@ export default function App() {
 
   useEffect(
     function () {
+      const controller = new AbortController();
+
       async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
           const res = await fetch(
             `http://www.omdbapi.com/?s=${query}&apikey=${apikey}`,
+            { signal: controller.signal },
           );
 
           if (!res.ok) {
@@ -74,6 +75,10 @@ export default function App() {
       }
 
       fetchMovies();
+
+      return function () {
+        controller.abort();
+      };
     },
     [query],
   );

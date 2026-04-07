@@ -2,7 +2,7 @@ export default function WatchedBox({ watched, onDeleteMovie }) {
   return (
     <ul className="list">
       {watched.map((movie) => (
-        <li>
+        <li key={movie.imdbID}>
           <img src={movie.poster} alt={`${movie.title} poster`} />
           <h3>{movie.title}</h3>
           <div>
