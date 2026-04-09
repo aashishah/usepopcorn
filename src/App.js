@@ -4,7 +4,7 @@ import Summary from "./components/Summary";
 import Box from "./components/Box";
 import MovieList from "./components/MovieList";
 import Loader from "./components/Loader";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Error from "./components/Error";
 import MovieDetails from "./components/MovieDetails";
 
@@ -12,11 +12,14 @@ const apikey = `${process.env.REACT_APP_OMDB_KEY}`;
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedMovie, setSelctedMovie] = useState(null);
+
+  const [watched, setWatched] = useState(function () {
+    return JSON.parse(localStorage.getItem("watched"));
+  });
 
   function handleSelectMovie(id) {
     setSelctedMovie((selectId) => (id === selectId ? null : id));
@@ -33,6 +36,13 @@ export default function App() {
   function handleAddWatched(movie) {
     setWatched((watched) => [...watched, movie]);
   }
+
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched],
+  );
 
   useEffect(
     function () {
